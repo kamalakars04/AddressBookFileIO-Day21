@@ -429,16 +429,24 @@
         /// </summary>
         public void WriteAddressBookToFile()
         {
+            // Writing to txt file
             string filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".txt";
             contactList.ForEach(contact => File.WriteAllText(filePath, 
                 "FirstName : "+contact.FirstName+ " LastName : " + contact.LastName+ 
                 "Address : " + contact.Address + " City : " + contact.City+
                 "State : " + contact.State + " Zip : " + contact.Zip+
                 "Email : " + contact.Email));
+
+            // Writing to csv file
+            filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".csv";
+            StreamWriter sw = new StreamWriter(filePath);
+            var csv = new CsvWriter(sw, CultureInfo.InvariantCulture);
+            csv.WriteRecords(contactList);
+            sw.Flush();
         }
 
         /// <summary>
-        /// UC 13 Reads data from csv file
+        /// UC 13, UC 14 Reads data from txt file
         /// </summary>
         public void ReadAddressBookFromFile()
         {
@@ -448,6 +456,33 @@
                 Console.WriteLine(String.Join("\n ",File.ReadLines(filePath))); ;
             }
             catch(FileNotFoundException)
+            {
+                Console.WriteLine("Write into the file to read from it.");
+            }
+        }
+
+        /// <summary>
+        /// UC 14 Reads the address book from CSV.
+        /// </summary>
+        public void ReadAddressBookFromCSV()
+        {
+            try
+            {
+                string filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook;
+                StreamReader sr = new StreamReader(filePath);
+
+                // Reading from  csv file
+                var csvOne = new CsvReader(sr, CultureInfo.InvariantCulture);
+                csvOne.Configuration.Delimiter = ",";
+                var list = csvOne.GetRecords<ContactDetails>().ToList();
+                if (list.Count() == 0)
+                {
+                    Console.WriteLine("No records found");
+                    return;
+                }
+                list.ForEach(contact => contact.toString());
+            }
+            catch (FileNotFoundException)
             {
                 Console.WriteLine("Write into the file to read from it.");
             }
