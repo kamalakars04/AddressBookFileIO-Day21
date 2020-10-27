@@ -8,6 +8,8 @@
     using System.Text;
     using CsvHelper;
     using CsvHelper.Configuration;
+    using Newtonsoft.Json;
+ 
     using NLog;
 
     [Serializable]
@@ -425,7 +427,7 @@
         }
 
         /// <summary>
-        /// UC 13 Can write all the contacts to a file seperately.
+        /// UC 13, UC 14, UC 15 Can write all the contacts to a file seperately.
         /// </summary>
         public void WriteAddressBookToFile()
         {
@@ -439,14 +441,25 @@
 
             // Writing to csv file
             filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".csv";
-            StreamWriter sw = new StreamWriter(filePath);
-            var csv = new CsvWriter(sw, CultureInfo.InvariantCulture);
-            csv.WriteRecords(contactList);
-            sw.Flush();
+            using (StreamWriter sw = new StreamWriter(filePath))
+            {
+                var csv = new CsvWriter(sw, CultureInfo.InvariantCulture);
+                csv.WriteRecords(contactList);
+                sw.Flush();
+            }
+            
+            // Writing to json file
+            filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".json";
+            using (StreamWriter sw = new StreamWriter(filePath))
+            {
+                string json = JsonConvert.SerializeObject(contactList);
+                sw.WriteLine(json);
+                sw.Flush();
+            }
         }
 
         /// <summary>
-        /// UC 13, UC 14 Reads data from txt file
+        /// UC 13 Reads data from txt file
         /// </summary>
         public void ReadAddressBookFromFile()
         {
@@ -468,13 +481,37 @@
         {
             try
             {
-                string filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook;
+                string filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook+".csv";
                 StreamReader sr = new StreamReader(filePath);
 
                 // Reading from  csv file
                 var csvOne = new CsvReader(sr, CultureInfo.InvariantCulture);
                 csvOne.Configuration.Delimiter = ",";
                 var list = csvOne.GetRecords<ContactDetails>().ToList();
+                if (list.Count() == 0)
+                {
+                    Console.WriteLine("No records found");
+                    return;
+                }
+                list.ForEach(contact => contact.toString());
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("Write into the file to read from it.");
+            }
+        }
+
+        /// <summary>
+        /// UC 15 Reads the address book from json.
+        /// </summary>
+        public void ReadAddressBookFromJSON()
+        {
+            try
+            {
+                // Read from json file
+                string filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".json";
+                string json = File.ReadAllText(filePath);
+                List<ContactDetails> list = JsonConvert.DeserializeObject<List<ContactDetails>>(json);
                 if (list.Count() == 0)
                 {
                     Console.WriteLine("No records found");

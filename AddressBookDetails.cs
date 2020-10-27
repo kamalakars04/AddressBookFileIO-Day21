@@ -23,7 +23,10 @@
         const string REMOVE_CONTACT = "remove";
         const string GET_ALL_CONTACTS = "view";
         const string WRITE = "write";
-        const string READ = "read";
+        const string READFILE = "fread";
+        const string READCSV = "cread";
+        const string READJSON = "jread";
+
 
         // Collection Decleration
         public Dictionary<string, AddressBook> addressBookList = new Dictionary<string, AddressBook>();
@@ -327,7 +330,9 @@
                                   "\nView - To view all contacts" +
                                   "\nRemove - To remove a contact and " +
                                   "\nSearch- To search to get contact deatails\nWrite - To write addressbook to file" +
-                                  "\nRead - To read from file" +
+                                  "\nfRead - To read from file" +
+                                  "\ncread - To read from CSV"+
+                                  "\njread - To read from JSON"+
                                   "\nE - To exit\n ");
                 switch (Console.ReadLine().ToLower())
                 {
@@ -355,8 +360,16 @@
                         addressBook.WriteAddressBookToFile();
                         break;
 
-                    case READ:
+                    case READFILE:
                         addressBook.ReadAddressBookFromFile();
+                        break;
+
+                    case READCSV:
+                        addressBook.ReadAddressBookFromCSV();
+                        break;
+
+                    case READJSON:
+                        addressBook.ReadAddressBookFromJSON();
                         break;
 
                     default:
