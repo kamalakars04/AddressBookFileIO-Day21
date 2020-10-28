@@ -427,35 +427,19 @@
         }
 
         /// <summary>
-        /// UC 13, UC 14, UC 15 Can write all the contacts to a file seperately.
+        /// UC 13 Can write all the contacts to a file seperately.
         /// </summary>
         public void WriteAddressBookToFile()
         {
             // Writing to txt file
             string filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".txt";
-            contactList.ForEach(contact => File.WriteAllText(filePath, 
-                "FirstName : "+contact.FirstName+ " LastName : " + contact.LastName+ 
-                "Address : " + contact.Address + " City : " + contact.City+
-                "State : " + contact.State + " Zip : " + contact.Zip+
+            contactList.ForEach(contact => File.WriteAllText(filePath,
+                "FirstName : " + contact.FirstName + " LastName : " + contact.LastName +
+                "Address : " + contact.Address + " City : " + contact.City +
+                "State : " + contact.State + " Zip : " + contact.Zip +
                 "Email : " + contact.Email));
-
-            // Writing to csv file
-            filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".csv";
-            using (StreamWriter sw = new StreamWriter(filePath))
-            {
-                var csv = new CsvWriter(sw, CultureInfo.InvariantCulture);
-                csv.WriteRecords(contactList);
-                sw.Flush();
-            }
-            
-            // Writing to json file
-            filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".json";
-            using (StreamWriter sw = new StreamWriter(filePath))
-            {
-                string json = JsonConvert.SerializeObject(contactList);
-                sw.WriteLine(json);
-                sw.Flush();
-            }
+            WriteAddressBookToCsv();
+            WriteAddressBookToJson();
         }
 
         /// <summary>
@@ -466,12 +450,28 @@
             try
             {
                 string filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".txt";
-                Console.WriteLine(String.Join("\n ",File.ReadLines(filePath))); ;
+                Console.WriteLine(String.Join("\n ", File.ReadLines(filePath))); ;
             }
-            catch(FileNotFoundException)
+            catch (FileNotFoundException)
             {
                 Console.WriteLine("Write into the file to read from it.");
             }
+        }
+
+        /// <summary>
+        /// UC 14 Can write all the contacts to a csv seperately.
+        /// </summary>
+        private void WriteAddressBookToCsv()
+        {
+            // Writing to csv file
+            string filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".csv";
+            using (StreamWriter sw = new StreamWriter(filePath))
+            {
+                var csv = new CsvWriter(sw, CultureInfo.InvariantCulture);
+                csv.WriteRecords(contactList);
+                sw.Flush();
+            }
+
         }
 
         /// <summary>
@@ -481,12 +481,12 @@
         {
             try
             {
-                string filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook+".csv";
+                string filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".csv";
                 StreamReader sr = new StreamReader(filePath);
 
                 // Reading from  csv file
                 var csvOne = new CsvReader(sr, CultureInfo.InvariantCulture);
-                csvOne.Configuration.Delimiter = ",";
+                //csvOne.Configuration.Delimiter = ",";
                 var list = csvOne.GetRecords<ContactDetails>().ToList();
                 if (list.Count() == 0)
                 {
@@ -498,6 +498,21 @@
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Write into the file to read from it.");
+            }
+        }
+
+        /// <summary>
+        /// UC 15 Can write all the contacts to a json seperately.
+        /// </summary>
+        private void WriteAddressBookToJson()
+        {
+            // Writing to json file
+            string filePath = @"C:\Users\kamalakar\Desktop\bridge labs\AddressBookFileIO\" + nameOfAddressBook + ".json";
+            using (StreamWriter sw = new StreamWriter(filePath))
+            {
+                string json = JsonConvert.SerializeObject(contactList);
+                sw.WriteLine(json);
+                sw.Flush();
             }
         }
 
